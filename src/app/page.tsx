@@ -1,4 +1,4 @@
-// ...existing code...
+// src/app/page.tsx
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -34,7 +34,7 @@ export default function Home() {
   const [newsItems, setNewsItems] = useState<NewsItem[]>([]);
   const [isMobile, setIsMobile] = useState(false);
   const [screenScale, setScreenScale] = useState(1);
-  const [menuOpen, setMenuOpen] = useState(true); // 初期値を true に
+  // const [menuOpen, setMenuOpen] = useState(true); // ハンバーガーメニュー用 - 無効化
 
   useEffect(() => {
     fetchCharacters();
@@ -366,13 +366,14 @@ export default function Home() {
       position: 'relative',
       overflow: 'hidden'
     }}>
-      {/* ハンバーガーメニューボタン */}
+      {/* ========== ハンバーガーメニューボタン - 無効化 ========== */}
+      {/* 
       <button
-        onClick={() => setMenuOpen(!menuOpen)}  // トグルに変更
+        onClick={() => setMenuOpen(!menuOpen)}
         style={{
           position: 'fixed',
           top: '20px',
-          left: menuOpen ? '320px' : '20px',  // メニューが開いている時は位置を調整
+          left: menuOpen ? '320px' : '20px',
           zIndex: 999,
           width: '50px',
           height: '50px',
@@ -386,7 +387,7 @@ export default function Home() {
           justifyContent: 'center',
           gap: '6px',
           boxShadow: '0 4px 10px rgba(0,0,0,0.5)',
-          transition: 'all 0.3s ease-in-out'  // アニメーション追加
+          transition: 'all 0.3s ease-in-out'
         }}
         onMouseEnter={(e) => {
           e.currentTarget.style.transform = 'scale(1.05)';
@@ -401,24 +402,11 @@ export default function Home() {
         <div style={{ width: '30px', height: '3px', background: '#ffffff', borderRadius: '2px' }} />
         <div style={{ width: '30px', height: '3px', background: '#ffffff', borderRadius: '2px' }} />
       </button>
-      {/* オーバーレイ
-      {menuOpen && (
-        <div
-          onClick={() => setMenuOpen(false)}
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'rgba(0, 0, 0, 0.7)',
-            zIndex: 1000,
-            backdropFilter: 'blur(4px)'
-          }}
-        />
-      )} */}
+      */}
+      {/* ========== ハンバーガーメニューボタン終了 ========== */}
 
-      {/* サイドメニュー */}
+      {/* ========== サイドメニュー - 無効化 ========== */}
+      {/*
       <div
         style={{
           position: 'fixed',
@@ -428,12 +416,11 @@ export default function Home() {
           height: '100vh',
           background: 'linear-gradient(to bottom, #000000, #1a0505, #000000)',
           boxShadow: menuOpen ? '4px 0 20px rgba(0,0,0,0.5)' : 'none',
-          zIndex: 998,  // ハンバーガーボタンより下に
+          zIndex: 998,
           transition: 'left 0.3s ease-in-out',
           overflowY: 'auto'
         }}
       >
-        {/* メニューヘッダー */}
         <div style={{
           padding: '20px',
           borderBottom: '2px solid rgba(185, 28, 28, 0.3)',
@@ -469,7 +456,6 @@ export default function Home() {
             ×
           </button>
         </div>
-        {/* メニュー項目 */}
         <nav style={{ padding: '20px 0' }}>
           {[
             { label: 'TOP', href: '/' },
@@ -505,13 +491,10 @@ export default function Home() {
                 e.currentTarget.style.color = '#e5e7eb';
               }}
             >
-
               <span style={{ letterSpacing: '1px' }}>{item.label}</span>
             </a>
           ))}
         </nav>
-
-        {/* メニューフッター */}
         <div style={{
           position: 'absolute',
           bottom: 0,
@@ -530,10 +513,10 @@ export default function Home() {
           </div>
         </div>
       </div>
+      */}
+      {/* ========== サイドメニュー終了 ========== */}
 
-      {/* ========== ここまで追加 ========== */}
-
-      {/* メインコンテンツ - メニューが開いている時は右に移動 */} 
+      {/* メインコンテンツ */} 
       <div style={{
         minHeight: '100vh',
         background: `
@@ -544,10 +527,7 @@ export default function Home() {
         backgroundPosition: 'center',
         backgroundAttachment: 'fixed',
         backgroundRepeat: 'no-repeat',
-        position: 'relative',
-        marginLeft: menuOpen ? '300px' : '0',  // メニューが開いている時は右に移動
-        transition: 'margin-left 0.3s ease-in-out',  // スムーズなアニメーション
-        width: menuOpen ? 'calc(100% - 300px)' : '100%',  // 幅を調整
+        position: 'relative'
       }}>
         <div style={{
           position: 'absolute',
