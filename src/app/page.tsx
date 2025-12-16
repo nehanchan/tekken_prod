@@ -90,11 +90,8 @@ export default function Home() {
       setNewsItems(JSON.parse(savedNews));
     } else {
       const defaultNews: NewsItem[] = [
-        { date: '2024.06.09', tag: '新着', content: '風間仁 のコマンドリストを追加' },
-        { date: '2024.07.15', tag: '新着', content: 'アリサ・ボスコノビッチ のコマンドリストを追加' },
-        { date: '2024.10.01', tag: '新着', content: '新キャラクター 三島平八 参戦!' },
-        { date: '2024.12.17', tag: '新着', content: '新キャラクター クライヴ・ロズフィールド 参戦' },
-        { date: '2025.04.15', tag: '新着', content: '鉄拳8 SEASON2開幕！' },
+        { date: '2025.11.30', tag: '新着', content: '鉄拳攻略サイト公開開始！　メモ・コンボメーカー機能を今後実装予定です' },
+        { date: '2024.12.10', tag: '新着', content: 'ミアリズのコマンドリストを追加' }
       ];
       setNewsItems(defaultNews);
       localStorage.setItem('tekkenNews', JSON.stringify(defaultNews));
