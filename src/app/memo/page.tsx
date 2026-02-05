@@ -11,7 +11,7 @@ interface Character {
   display_name?: string | null;
 }
 
-const CATEGORIES = [
+const DEFAULT_CATEGORIES = [
   '確定反撃',
   'しゃがめる連携',
   '割れない連携',
@@ -30,6 +30,14 @@ export default function MemoPage() {
   const [importance, setImportance] = useState(0);
   const [loading, setLoading] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  
+  // 分類管理
+  const [categories, setCategories] = useState<string[]>(DEFAULT_CATEGORIES);
+  const [categorySettingsId, setCategorySettingsId] = useState<string | null>(null);
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
+  const [editingCategoryIndex, setEditingCategoryIndex] = useState<number | null>(null);
+  const [editingCategoryValue, setEditingCategoryValue] = useState('');
+  const [newCategoryValue, setNewCategoryValue] = useState('');
 
   useEffect(() => {
     const checkScreenSize = () => {
@@ -38,8 +46,140 @@ export default function MemoPage() {
     checkScreenSize();
     window.addEventListener('resize', checkScreenSize);
     fetchCharacters();
+    loadCategories();
     return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
+
+  const loadCategories = async () => {
+    try {
+      const { data } = await client.models.CategorySettings.list({ authMode: 'userPool' });
+      
+      if (data && data.length > 0 && data[0]) {
+        const settings = data[0];
+        setCategorySettingsId(settings.id);
+        
+        if (settings.categories && settings.categories.length > 0) {
+          const validCategories = settings.categories.filter((c): c is string => c !== null);
+          setCategories(validCategories);
+        }
+      } else {
+        // 初回は空なので、デフォルト分類をDBに保存
+        await saveCategories(DEFAULT_CATEGORIES);
+      }
+    } catch (error) {
+      console.error('分類の読み込みエラー:', error);
+    }
+  };
+
+  const saveCategories = async (newCategories: string[]) => {
+    try {
+      if (categorySettingsId) {
+        // 更新
+        const result = await client.models.CategorySettings.update({
+          id: categorySettingsId,
+          categories: newCategories
+        }, { authMode: 'userPool' });
+        
+        if (result.data) {
+          setCategories(newCategories);
+        }
+      } else {
+        // 新規作成
+        const result = await client.models.CategorySettings.create({
+          categories: newCategories
+        }, { authMode: 'userPool' });
+        
+        if (result.data) {
+          setCategorySettingsId(result.data.id);
+          setCategories(newCategories);
+        }
+      }
+    } catch (error) {
+      console.error('分類の保存エラー:', error);
+      alert('分類の保存に失敗しました');
+    }
+  };
+
+  const handleAddCategory = () => {
+    if (!newCategoryValue.trim()) {
+      alert('分類名を入力してください');
+      return;
+    }
+    if (categories.includes(newCategoryValue.trim())) {
+      alert('この分類は既に存在します');
+      return;
+    }
+    const newCategories = [...categories, newCategoryValue.trim()];
+    saveCategories(newCategories);
+    setNewCategoryValue('');
+  };
+
+  const handleStartEdit = (index: number) => {
+    setEditingCategoryIndex(index);
+    setEditingCategoryValue(categories[index]);
+  };
+
+  const handleSaveEdit = () => {
+    if (editingCategoryIndex === null) return;
+    if (!editingCategoryValue.trim()) {
+      alert('分類名を入力してください');
+      return;
+    }
+    
+    const otherCategories = categories.filter((_, i) => i !== editingCategoryIndex);
+    if (otherCategories.includes(editingCategoryValue.trim())) {
+      alert('この分類は既に存在します');
+      return;
+    }
+    
+    const newCategories = [...categories];
+    const oldValue = newCategories[editingCategoryIndex];
+    newCategories[editingCategoryIndex] = editingCategoryValue.trim();
+    saveCategories(newCategories);
+    
+    // 選択中の分類も更新
+    setSelectedCategories(selectedCategories.map(c => c === oldValue ? editingCategoryValue.trim() : c));
+    
+    setEditingCategoryIndex(null);
+    setEditingCategoryValue('');
+  };
+
+  const handleCancelEdit = () => {
+    setEditingCategoryIndex(null);
+    setEditingCategoryValue('');
+  };
+
+  const handleDeleteCategory = (index: number) => {
+    const categoryName = categories[index];
+    if (!confirm(`「${categoryName}」を削除しますか？`)) return;
+    
+    const deletedCategory = categories[index];
+    const newCategories = categories.filter((_, i) => i !== index);
+    saveCategories(newCategories);
+    
+    // 選択中の分類から削除
+    setSelectedCategories(selectedCategories.filter(c => c !== deletedCategory));
+  };
+
+  const handleMoveUp = (index: number) => {
+    if (index === 0) return;
+    const newCategories = [...categories];
+    [newCategories[index - 1], newCategories[index]] = [newCategories[index], newCategories[index - 1]];
+    saveCategories(newCategories);
+  };
+
+  const handleMoveDown = (index: number) => {
+    if (index === categories.length - 1) return;
+    const newCategories = [...categories];
+    [newCategories[index], newCategories[index + 1]] = [newCategories[index + 1], newCategories[index]];
+    saveCategories(newCategories);
+  };
+
+  const handleResetCategories = () => {
+    if (!confirm('分類をデフォルトに戻しますか？')) return;
+    saveCategories(DEFAULT_CATEGORIES);
+    setSelectedCategories([]);
+  };
 
   const fetchCharacters = async () => {
     try {
@@ -82,7 +222,6 @@ export default function MemoPage() {
         ? (selectedChar.display_name || selectedChar.character_name_jp || selectedChar.character_name_en)
         : selectedCharacter;
 
-      // メモデータを作成（空配列やnullの適切な処理）
       const memoData = {
         character_id: selectedCharacter,
         character_name: characterName || selectedCharacter,
@@ -95,7 +234,7 @@ export default function MemoPage() {
       console.log('メモ保存データ:', memoData);
 
       const result = await client.models.Memo.create(memoData, {
-        authMode: 'apiKey'
+        authMode: 'userPool'
       });
 
       console.log('保存結果:', result);
@@ -103,7 +242,6 @@ export default function MemoPage() {
       if (result.data) {
         alert('メモを保存しました！');
         
-        // フォームをリセット
         setSelectedCharacter('');
         setSelectedCategories([]);
         setTitle('');
@@ -116,7 +254,6 @@ export default function MemoPage() {
     } catch (error) {
       console.error('保存エラー詳細:', error);
       
-      // エラーの詳細情報を表示
       if (error instanceof Error) {
         alert(`保存に失敗しました: ${error.message}`);
       } else {
@@ -135,7 +272,7 @@ export default function MemoPage() {
   return (
     <div style={{
       minHeight: '100vh',
-      background: `
+      backgroundImage: `
         linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.5)),
         url('/backgrounds/background.jpg')
       `,
@@ -271,22 +408,49 @@ export default function MemoPage() {
 
             {/* 分類選択 */}
             <div style={{ marginBottom: '30px' }}>
-              <label style={{
-                display: 'block',
-                fontSize: '18px',
-                fontWeight: 'bold',
-                color: '#fca5a5',
-                marginBottom: '12px',
-                letterSpacing: '1px'
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '12px'
               }}>
-                分類
-              </label>
+                <label style={{
+                  fontSize: '18px',
+                  fontWeight: 'bold',
+                  color: '#fca5a5',
+                  letterSpacing: '1px'
+                }}>
+                  分類
+                </label>
+                <button
+                  onClick={() => setShowCategoryModal(true)}
+                  style={{
+                    padding: '6px 12px',
+                    fontSize: '13px',
+                    fontWeight: 'bold',
+                    background: 'rgba(59, 130, 246, 0.3)',
+                    border: '2px solid rgba(59, 130, 246, 0.5)',
+                    borderRadius: '6px',
+                    color: '#60a5fa',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'rgba(59, 130, 246, 0.5)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'rgba(59, 130, 246, 0.3)';
+                  }}
+                >
+                  ⚙ 分類を管理
+                </button>
+              </div>
               <div style={{
                 display: 'flex',
                 flexWrap: 'wrap',
                 gap: '10px'
               }}>
-                {CATEGORIES.map(category => (
+                {categories.map(category => (
                   <label
                     key={category}
                     style={{
@@ -454,26 +618,7 @@ export default function MemoPage() {
               justifyContent: 'center',
               flexWrap: 'wrap'
             }}>
-              <a
-                href="/"
-                style={{
-                  padding: '14px 40px',
-                  fontSize: '16px',
-                  fontWeight: 'bold',
-                  background: 'rgba(107, 114, 128, 0.3)',
-                  border: '2px solid rgba(107, 114, 128, 0.5)',
-                  borderRadius: '8px',
-                  color: '#ffffff',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  minWidth: '140px',
-                  textDecoration: 'none',
-                  display: 'inline-block',
-                  textAlign: 'center'
-                }}
-              >
-                戻る
-              </a>
+      
 
               <button
                 onClick={handleSave}
@@ -522,6 +667,379 @@ export default function MemoPage() {
           </div>
         </div>
       </div>
+
+      {/* 分類管理モーダル */}
+      {showCategoryModal && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0, 0, 0, 0.8)',
+            zIndex: 1000,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '20px',
+            backdropFilter: 'blur(4px)'
+          }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowCategoryModal(false);
+              setEditingCategoryIndex(null);
+              setEditingCategoryValue('');
+              setNewCategoryValue('');
+            }
+          }}
+        >
+          <div
+            style={{
+              position: 'relative',
+              maxWidth: '600px',
+              width: '100%',
+              maxHeight: '80vh',
+              overflow: 'auto'
+            }}
+          >
+            <div style={{
+              position: 'absolute',
+              top: '0',
+              left: '0',
+              right: '0',
+              bottom: '0',
+              background: 'linear-gradient(135deg, #dc2626, #991b1b)',
+              padding: '3px',
+              borderRadius: '12px',
+              boxShadow: '0 10px 30px rgba(0, 0, 0, 0.8)'
+            }}>
+              <div style={{
+                width: '100%',
+                height: '100%',
+                background: 'rgba(0, 0, 0, 0.95)',
+                borderRadius: '10px'
+              }} />
+            </div>
+
+            <div style={{
+              position: 'relative',
+              padding: '30px'
+            }}>
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '20px'
+              }}>
+                <h2 style={{
+                  fontSize: '24px',
+                  fontWeight: 'bold',
+                  color: '#fef2f2',
+                  margin: 0
+                }}>
+                  分類管理
+                </h2>
+                <button
+                  onClick={() => {
+                    setShowCategoryModal(false);
+                    setEditingCategoryIndex(null);
+                    setEditingCategoryValue('');
+                    setNewCategoryValue('');
+                  }}
+                  style={{
+                    background: 'rgba(185, 28, 28, 0.3)',
+                    border: '1px solid rgba(185, 28, 28, 0.5)',
+                    borderRadius: '50%',
+                    width: '32px',
+                    height: '32px',
+                    color: '#fca5a5',
+                    cursor: 'pointer',
+                    fontSize: '18px'
+                  }}
+                >
+                  ×
+                </button>
+              </div>
+
+              {/* 新規追加フォーム */}
+              <div style={{
+                marginBottom: '20px',
+                padding: '15px',
+                background: 'rgba(0, 0, 0, 0.3)',
+                borderRadius: '8px',
+                border: '1px solid rgba(185, 28, 28, 0.2)'
+              }}>
+                <label style={{
+                  display: 'block',
+                  fontSize: '14px',
+                  fontWeight: 'bold',
+                  color: '#fca5a5',
+                  marginBottom: '8px'
+                }}>
+                  新しい分類を追加
+                </label>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <input
+                    type="text"
+                    value={newCategoryValue}
+                    onChange={(e) => setNewCategoryValue(e.target.value)}
+                    placeholder="分類名を入力"
+                    disabled={editingCategoryIndex !== null}
+                    style={{
+                      flex: 1,
+                      padding: '10px',
+                      fontSize: '14px',
+                      background: 'rgba(0, 0, 0, 0.6)',
+                      border: '2px solid rgba(185, 28, 28, 0.4)',
+                      borderRadius: '6px',
+                      color: '#ffffff',
+                      outline: 'none'
+                    }}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter' && editingCategoryIndex === null) {
+                        handleAddCategory();
+                      }
+                    }}
+                  />
+                  <button
+                    onClick={handleAddCategory}
+                    disabled={editingCategoryIndex !== null}
+                    style={{
+                      padding: '10px 20px',
+                      fontSize: '14px',
+                      fontWeight: 'bold',
+                      background: editingCategoryIndex !== null 
+                        ? 'rgba(107, 114, 128, 0.3)'
+                        : 'rgba(34, 197, 94, 0.3)',
+                      border: '2px solid',
+                      borderColor: editingCategoryIndex !== null
+                        ? 'rgba(107, 114, 128, 0.5)'
+                        : 'rgba(34, 197, 94, 0.5)',
+                      borderRadius: '6px',
+                      color: editingCategoryIndex !== null ? '#6b7280' : '#86efac',
+                      cursor: editingCategoryIndex !== null ? 'not-allowed' : 'pointer'
+                    }}
+                  >
+                    追加
+                  </button>
+                </div>
+              </div>
+
+              {/* 分類リスト */}
+              <div style={{ marginBottom: '20px' }}>
+                <div style={{
+                  fontSize: '14px',
+                  fontWeight: 'bold',
+                  color: '#fca5a5',
+                  marginBottom: '10px'
+                }}>
+                  分類一覧 ({categories.length}件)
+                </div>
+                <div style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '8px'
+                }}>
+                  {categories.map((category, index) => (
+                    <div
+                      key={index}
+                      style={{
+                        padding: '12px',
+                        background: 'rgba(0, 0, 0, 0.3)',
+                        border: '1px solid rgba(185, 28, 28, 0.2)',
+                        borderRadius: '6px'
+                      }}
+                    >
+                      {editingCategoryIndex === index ? (
+                        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                          <input
+                            type="text"
+                            value={editingCategoryValue}
+                            onChange={(e) => setEditingCategoryValue(e.target.value)}
+                            style={{
+                              flex: 1,
+                              padding: '8px',
+                              fontSize: '14px',
+                              background: 'rgba(0, 0, 0, 0.6)',
+                              border: '2px solid rgba(185, 28, 28, 0.4)',
+                              borderRadius: '4px',
+                              color: '#ffffff',
+                              outline: 'none'
+                            }}
+                            onKeyPress={(e) => {
+                              if (e.key === 'Enter') {
+                                handleSaveEdit();
+                              }
+                            }}
+                            autoFocus
+                          />
+                          <button
+                            onClick={handleSaveEdit}
+                            style={{
+                              padding: '8px 12px',
+                              fontSize: '12px',
+                              fontWeight: 'bold',
+                              background: 'rgba(34, 197, 94, 0.3)',
+                              border: '2px solid rgba(34, 197, 94, 0.5)',
+                              borderRadius: '4px',
+                              color: '#86efac',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            保存
+                          </button>
+                          <button
+                            onClick={handleCancelEdit}
+                            style={{
+                              padding: '8px 12px',
+                              fontSize: '12px',
+                              fontWeight: 'bold',
+                              background: 'rgba(107, 114, 128, 0.3)',
+                              border: '2px solid rgba(107, 114, 128, 0.5)',
+                              borderRadius: '4px',
+                              color: '#9ca3af',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            キャンセル
+                          </button>
+                        </div>
+                      ) : (
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <div style={{
+                            flex: 1,
+                            fontSize: '14px',
+                            color: '#e5e7eb',
+                            fontWeight: '500'
+                          }}>
+                            {category}
+                          </div>
+                          <div style={{ display: 'flex', gap: '4px' }}>
+                            <button
+                              onClick={() => handleMoveUp(index)}
+                              disabled={index === 0}
+                              style={{
+                                padding: '4px 8px',
+                                fontSize: '12px',
+                                background: index === 0 ? 'rgba(107, 114, 128, 0.2)' : 'rgba(59, 130, 246, 0.3)',
+                                border: '1px solid',
+                                borderColor: index === 0 ? 'rgba(107, 114, 128, 0.3)' : 'rgba(59, 130, 246, 0.5)',
+                                borderRadius: '4px',
+                                color: index === 0 ? '#6b7280' : '#60a5fa',
+                                cursor: index === 0 ? 'not-allowed' : 'pointer'
+                              }}
+                              title="上に移動"
+                            >
+                              ↑
+                            </button>
+                            <button
+                              onClick={() => handleMoveDown(index)}
+                              disabled={index === categories.length - 1}
+                              style={{
+                                padding: '4px 8px',
+                                fontSize: '12px',
+                                background: index === categories.length - 1 ? 'rgba(107, 114, 128, 0.2)' : 'rgba(59, 130, 246, 0.3)',
+                                border: '1px solid',
+                                borderColor: index === categories.length - 1 ? 'rgba(107, 114, 128, 0.3)' : 'rgba(59, 130, 246, 0.5)',
+                                borderRadius: '4px',
+                                color: index === categories.length - 1 ? '#6b7280' : '#60a5fa',
+                                cursor: index === categories.length - 1 ? 'not-allowed' : 'pointer'
+                              }}
+                              title="下に移動"
+                            >
+                              ↓
+                            </button>
+                            <button
+                              onClick={() => handleStartEdit(index)}
+                              disabled={editingCategoryIndex !== null}
+                              style={{
+                                padding: '4px 8px',
+                                fontSize: '12px',
+                                background: editingCategoryIndex !== null ? 'rgba(107, 114, 128, 0.2)' : 'rgba(251, 146, 60, 0.3)',
+                                border: '1px solid',
+                                borderColor: editingCategoryIndex !== null ? 'rgba(107, 114, 128, 0.3)' : 'rgba(251, 146, 60, 0.5)',
+                                borderRadius: '4px',
+                                color: editingCategoryIndex !== null ? '#6b7280' : '#fb923c',
+                                cursor: editingCategoryIndex !== null ? 'not-allowed' : 'pointer'
+                              }}
+                              title="編集"
+                            >
+                              編集
+                            </button>
+                            <button
+                              onClick={() => handleDeleteCategory(index)}
+                              disabled={editingCategoryIndex !== null}
+                              style={{
+                                padding: '4px 8px',
+                                fontSize: '12px',
+                                background: editingCategoryIndex !== null ? 'rgba(107, 114, 128, 0.2)' : 'rgba(239, 68, 68, 0.3)',
+                                border: '1px solid',
+                                borderColor: editingCategoryIndex !== null ? 'rgba(107, 114, 128, 0.3)' : 'rgba(239, 68, 68, 0.5)',
+                                borderRadius: '4px',
+                                color: editingCategoryIndex !== null ? '#6b7280' : '#fca5a5',
+                                cursor: editingCategoryIndex !== null ? 'not-allowed' : 'pointer'
+                              }}
+                              title="削除"
+                            >
+                              削除
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* フッターボタン */}
+              <div style={{
+                display: 'flex',
+                gap: '10px',
+                justifyContent: 'flex-end',
+                paddingTop: '20px',
+                borderTop: '1px solid rgba(185, 28, 28, 0.3)'
+              }}>
+                <button
+                  onClick={handleResetCategories}
+                  style={{
+                    padding: '10px 20px',
+                    fontSize: '14px',
+                    fontWeight: 'bold',
+                    background: 'rgba(239, 68, 68, 0.3)',
+                    border: '2px solid rgba(239, 68, 68, 0.5)',
+                    borderRadius: '6px',
+                    color: '#fca5a5',
+                    cursor: 'pointer'
+                  }}
+                >
+                  デフォルトに戻す
+                </button>
+                <button
+                  onClick={() => {
+                    setShowCategoryModal(false);
+                    setEditingCategoryIndex(null);
+                    setEditingCategoryValue('');
+                    setNewCategoryValue('');
+                  }}
+                  style={{
+                    padding: '10px 20px',
+                    fontSize: '14px',
+                    fontWeight: 'bold',
+                    background: 'linear-gradient(135deg, #dc2626, #991b1b)',
+                    border: 'none',
+                    borderRadius: '6px',
+                    color: '#ffffff',
+                    cursor: 'pointer'
+                  }}
+                >
+                  閉じる
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

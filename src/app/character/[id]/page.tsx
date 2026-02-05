@@ -1,4 +1,4 @@
-// src/app/character/[id]/page.tsx (文字サイズ拡大版・モバイル開閉機能付き)
+// src/app/character/[id]/page.tsx (文字サイズ拡大版)
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -80,7 +80,6 @@ export default function CharacterDetailPage() {
   const [selectedMove, setSelectedMove] = useState<MoveData | null>(null);
   const [showMoveModal, setShowMoveModal] = useState(false);
   const [textScale, setTextScale] = useState(1);
-  const [isCharacterInfoOpen, setIsCharacterInfoOpen] = useState(false); // モバイルでは初期状態を閉じる
 
   // 画面サイズ監視とテキストスケール計算（全体的にスケール値を上げる）
   useEffect(() => {
@@ -887,45 +886,13 @@ const renderRemarks = (remarks?: (string | null)[] | null) => {
           overflow: 'hidden'
         }}
       >
-        {/* 上部：キャラクター名（中央配置）と開閉ボタン */}
+        {/* 上部：キャラクター名（中央配置） */}
         <div style={{
           background: 'linear-gradient(to bottom, rgba(0, 0, 0, 0.8), rgba(127, 29, 29, 0.3))',
           padding: isMobile ? '20px' : '30px 40px',
           borderBottom: '2px solid rgba(185, 28, 28, 0.4)',
-          textAlign: 'center',
-          position: 'relative'
+          textAlign: 'center'
         }}>
-          {/* モバイル用開閉ボタン */}
-          {isMobile && (
-            <button
-              onClick={() => setIsCharacterInfoOpen(!isCharacterInfoOpen)}
-              style={{
-                position: 'absolute',
-                top: '20px',
-                right: '20px',
-                background: 'rgba(185, 28, 28, 0.3)',
-                border: '1px solid rgba(185, 28, 28, 0.5)',
-                borderRadius: '6px',
-                width: '40px',
-                height: '40px',
-                color: '#fca5a5',
-                cursor: 'pointer',
-                fontSize: '20px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                transition: 'all 0.2s'
-              }}
-              onMouseDown={(e) => {
-                e.currentTarget.style.background = 'rgba(185, 28, 28, 0.5)';
-              }}
-              onMouseUp={(e) => {
-                e.currentTarget.style.background = 'rgba(185, 28, 28, 0.3)';
-              }}
-            >
-              {isCharacterInfoOpen ? '▲' : '▼'}
-            </button>
-          )}
           <div style={{ 
             fontSize: isMobile ? '32px' : '48px', 
             fontWeight: 'bold', 
@@ -957,12 +924,11 @@ const renderRemarks = (remarks?: (string | null)[] | null) => {
           )}
         </div>
 
-{/* 下部：左側情報と右側画像（モバイルでは開閉可能） */}
-{(!isMobile || isCharacterInfoOpen) && (
+{/* 下部：左側情報と右側画像 */}
 <div style={{ 
   display: 'flex',
   flexDirection: isMobile ? 'column' : 'row',
-  minHeight: isMobile ? 'auto' : '600px',
+  minHeight: isMobile ? 'auto' : '600px',  // ← 最小高さを設定
 }}>
   {/* 左側：基本情報とキャラクター紹介 */}
   <div style={{ 
@@ -972,7 +938,8 @@ const renderRemarks = (remarks?: (string | null)[] | null) => {
     display: 'flex',
     flexDirection: 'column',
     gap: '32px',
-    minWidth: 0
+    minWidth: 0,
+    // overflowY を削除して自動拡大を許可
   }}>
                 {/* 基本情報セクション */}
             <div>
@@ -1070,7 +1037,7 @@ const renderRemarks = (remarks?: (string | null)[] | null) => {
   {/* 右側：キャラクター画像 */}
   <div style={{
     flex: '0 0 40%',
-    height: isMobile ? '400px' : '600px',
+    height: isMobile ? '400px' : '600px',  // ← 固定高さに戻す
     background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.6), rgba(127, 29, 29, 0.3))',
     position: 'relative',
     display: 'flex',
@@ -1132,7 +1099,6 @@ const renderRemarks = (remarks?: (string | null)[] | null) => {
             }} />
           </div>
         </div>
-)}
       </div>
 
       {/* 技分類選択・技表示 */}
@@ -1213,11 +1179,11 @@ const renderRemarks = (remarks?: (string | null)[] | null) => {
                         </div>
                       ) : (
                         /* デスクトップ表示: テーブル形式 */
-                        <div style={{ position: 'relative', overflowX: 'auto', padding: '0' }}>
+                        <div style={{ position: 'relative', overflowX: 'auto', padding: '0' }}>  {/* padding: '0 2px' → '0' に変更 */}
   <table style={{ 
     width: '100%', 
     borderCollapse: 'collapse', 
-    border: '2px solid rgba(185, 28, 28, 0.3)',
+    border: '2px solid rgba(185, 28, 28, 0.3)',  // 1px → 2px に統一（見栄えのため）
     minWidth: '1400px',
     tableLayout: 'fixed'
   }}>
@@ -1685,6 +1651,30 @@ const renderRemarks = (remarks?: (string | null)[] | null) => {
           </div>
         </div>
       )}
+
+      {/* フッター */}
+      <footer style={{
+        backgroundColor: '#000000',
+        color: '#ffffff',
+        padding: 0,
+        margin: isMobile ? '0 -16px -16px -16px' : '0 -24px -24px -24px',
+        width: 'auto'
+      }}>
+        <div style={{
+          maxWidth: '100%',
+          margin: 0,
+          padding: '24px 0',
+          textAlign: 'center'
+        }}>
+          <p style={{
+            fontSize: isMobile ? '14px' : '16px',
+            margin: 0
+          }}>
+            TEKKEN™8 & ©Bandai Namco Entertainment Inc.
+          </p>
+        </div>
+      </footer>
+
     </div>
   );
 }

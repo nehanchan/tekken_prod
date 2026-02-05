@@ -80,7 +80,7 @@ const schema = a.schema({
       allow.authenticated().to(['create', 'read', 'update', 'delete']),
     ]),
 
-  // メモ（新規追加）
+  // メモ（ユーザーごとに管理）
   Memo: a
     .model({
       character_id: a.string().required(),
@@ -91,9 +91,28 @@ const schema = a.schema({
       importance: a.integer(),
     })
     .authorization((allow) => [
-      allow.publicApiKey().to(['create', 'read', 'update', 'delete']),
-      allow.guest().to(['read']),
-      allow.authenticated().to(['create', 'read', 'update', 'delete']),
+      allow.owner(),
+      allow.publicApiKey().to(['read']), // 開発中のみ
+    ]),
+
+  // コンボ
+  // コンボ（ユーザーごとに管理）
+  Combo: a
+    .model({
+      character_id: a.string().required(),
+      character_name: a.string(),
+      title: a.string(),
+      description: a.string(),
+      category: a.string(),
+      difficulty: a.integer(),
+      damage: a.integer(),
+      importance: a.integer(),
+      nodes: a.string(),
+      display_mode: a.string(),
+    })
+    .authorization((allow) => [
+      allow.owner(),
+      allow.publicApiKey().to(['read']), // 開発中のみ
     ]),
 
   // 掲示板
@@ -110,6 +129,17 @@ const schema = a.schema({
       allow.guest().to(['read']),
       allow.owner().to(['create', 'read', 'update', 'delete']),
     ]),
+
+  // 分類設定（メモの分類管理用・ユーザーごと）
+  CategorySettings: a
+    .model({
+      categories: a.string().array(),
+    })
+    .authorization((allow) => [
+      allow.owner(),
+      allow.publicApiKey().to(['read']), // 開発中のみ
+    ]),
+
 });
 
 export type Schema = ClientSchema<typeof schema>;
