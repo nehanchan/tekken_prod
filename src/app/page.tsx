@@ -101,7 +101,10 @@ export default function Home() {
       setNewsItems(JSON.parse(savedNews));
     } else {
       const defaultNews: NewsItem[] = [
+        { date: '2026.2.05', tag: '新着', content: '対策メモ機能を追加！' },
+        { date: '2025.12.10', tag: '新着', content: 'ミアリズのコマンドリストを追加' },
         { date: '2025.11.30', tag: '新着', content: '鉄拳攻略サイト公開開始！　メモ・コンボメーカー機能を今後実装予定です' },
+        
       ];
       setNewsItems(defaultNews);
       localStorage.setItem('tekkenNews', JSON.stringify(defaultNews));
