@@ -1,118 +1,51 @@
-/* Authenticator Custom Styles - Clean ASCII Version */
+/* 文字化けや全角スペースを防ぐため、この行を含めて全て貼り直してください */
 
-/* 全体の変数定義 */
 [data-amplify-authenticator] {
   --amplify-colors-background-primary: transparent !important;
-  --amplify-colors-background-secondary: transparent !important;
   --amplify-colors-border-primary: rgba(185, 28, 28, 0.5) !important;
-  --amplify-colors-border-secondary: rgba(185, 28, 28, 0.5) !important;
-  --amplify-colors-brand-primary-10: #dc2626 !important;
   --amplify-colors-brand-primary-80: #dc2626 !important;
-  --amplify-colors-brand-primary-90: #991b1b !important;
-  --amplify-colors-brand-primary-100: #7f1d1d !important;
   --amplify-colors-font-primary: #ffffff !important;
-  --amplify-colors-font-secondary: #ffffff !important;
-  --amplify-colors-font-interactive: #ffffff !important;
-  background: transparent !important;
 }
 
-/* フォーム全体のコンテナ */
+/* フォームの外枠 */
 [data-amplify-authenticator] [data-amplify-router] {
-  background: linear-gradient(135deg, #dc2626, #991b1b) !important;
-  padding: 3px !important;
-  border-radius: 12px !important;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8) !important;
-  max-width: 480px !important;
-  margin: 60px auto !important;
-}
-
-[data-amplify-authenticator] [data-amplify-form] {
   background: rgba(0, 0, 0, 0.95) !important;
-  border-radius: 10px !important;
+  border: 1px solid #dc2626 !important;
+  border-radius: 12px !important;
 }
 
-/* タブ設定 */
-[data-amplify-authenticator] [role="tab"] {
-  color: rgba(255, 255, 255, 0.5) !important;
-  border-top: 3px solid rgba(220, 38, 38, 0.5) !important;
-  background: transparent !important;
-}
-
-[data-amplify-authenticator] [role="tab"][aria-selected="true"] {
-  color: #ffffff !important;
-  border-top: 3px solid #ffffff !important;
-  background: rgba(220, 38, 38, 0.4) !important;
-}
-
-/* フィールドラベル */
-[data-amplify-authenticator] label {
-  color: #fca5a5 !important;
-  font-weight: 600 !important;
-}
-
-/* 入力欄本体のスタイル */
-[data-amplify-authenticator] .amplify-input {
-  background: rgba(255, 255, 255, 0.1) !important;
-  border: 1px solid rgba(185, 28, 28, 0.5) !important;
-  color: #ffffff !important;
-}
-
-/* -------------------------------------------------- */
-/* パスワード可視化ボタン（目玉）とその枠線の完全統一 */
-/* -------------------------------------------------- */
-
-/* パスワード入力欄とボタンを囲むグループの枠線を赤に固定 */
+/* 入力欄とボタンのグループ（枠線を統一） */
 [data-amplify-authenticator] .amplify-field-group {
   border: 1px solid rgba(185, 28, 28, 0.5) !important;
   border-radius: 6px !important;
   background: rgba(255, 255, 255, 0.1) !important;
+  box-shadow: none !important; /* 余計な影を消す */
 }
 
-/* グループ内の入力欄とボタンの境界線を調整 */
-[data-amplify-authenticator] .amplify-field-group .amplify-input,
-[data-amplify-authenticator] .amplify-field-group .amplify-field__show-password {
-  border: none !important; /* 外側のグループが枠線を担当するため */
-  background: transparent !important;
+/* 入力欄本体の枠線を消す（グループ側に枠線があるため） */
+[data-amplify-authenticator] .amplify-input {
+  border: none !important;
+  color: #ffffff !important;
 }
 
-/* ボタンと入力欄の間の仕切り線を赤で追加 */
+/* パスワード表示ボタン（目玉）のスタイル */
 [data-amplify-authenticator] .amplify-field__show-password {
-  color: #dc2626 !important; /* アイコンを赤に */
+  border: none !important;
   border-left: 1px solid rgba(185, 28, 28, 0.5) !important;
-  border-radius: 0 6px 6px 0 !important;
-  padding: 0 12px !important;
+  color: #dc2626 !important;
+  background: transparent !important;
+  outline: none !important;
+  box-shadow: none !important;
 }
 
-/* 下側の「パスワード確認」も同様に適用されるようセレクタを強化 */
-[data-amplify-authenticator] .amplify-password-field .amplify-field-group {
-  border-color: rgba(185, 28, 28, 0.5) !important;
+/* ボタンホバー時 */
+[data-amplify-authenticator] .amplify-field__show-password:hover {
+  background: rgba(220, 38, 38, 0.1) !important;
 }
-
-/* -------------------------------------------------- */
 
 /* 送信ボタン */
 [data-amplify-authenticator] button[type="submit"] {
-  background: linear-gradient(135deg, #dc2626, #991b1b) !important;
+  background: #dc2626 !important;
   color: #ffffff !important;
-  font-weight: bold !important;
-  border: none !important;
-  margin-top: 20px !important;
-  cursor: pointer !important;
-}
-
-/* その他のリンクやメッセージ */
-[data-amplify-authenticator] .amplify-text {
-  color: #ffffff !important;
-}
-
-[data-amplify-authenticator] [role="alert"] {
-  background: rgba(239, 68, 68, 0.2) !important;
-  color: #fca5a5 !important;
-  border: 1px solid rgba(239, 68, 68, 0.5) !important;
-}
-
-/* 不要なボタンの非表示 */
-[data-amplify-authenticator] button[data-amplify-router-content="Resend Code"],
-button[aria-label*="再送信"] {
-  display: none !important;
+  border-radius: 6px !important;
 }
