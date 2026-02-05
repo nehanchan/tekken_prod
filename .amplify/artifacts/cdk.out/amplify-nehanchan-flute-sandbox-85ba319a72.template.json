@@ -1,5 +1,5 @@
 {
- "Description": "{\"createdOn\":\"Windows\",\"createdBy\":\"AmplifySandbox\",\"createdWith\":\"1.16.1\",\"stackType\":\"root\",\"metadata\":{}}",
+ "Description": "{\"createdOn\":\"Windows\",\"createdBy\":\"AmplifySandbox\",\"createdWith\":\"1.20.0\",\"stackType\":\"root\",\"metadata\":{}}",
  "Metadata": {
   "AWS::Amplify::Platform": {
    "version": "1",
@@ -23,6 +23,7 @@
     "passwordPolicyRequirements",
     "mfaConfiguration",
     "mfaTypes",
+    "passwordlessOptions",
     "socialProviders",
     "oauthCognitoDomain",
     "oauthScope",
@@ -113,6 +114,9 @@
   },
   "mfaTypes": {
    "Value": "[]"
+  },
+  "passwordlessOptions": {
+   "Value": ""
   },
   "socialProviders": {
    "Value": ""
@@ -263,7 +267,7 @@
        {
         "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
        },
-       "/1ad9a95a1aa0817bfcaec4cae82d81a7bd06d8ef1a583e670645232157233462.json"
+       "/e4ed5fe498704ea547f677541f79f9c46fe9ba283095bed6c2aa01dc0b5bf58a.json"
       ]
      ]
     }
@@ -331,7 +335,7 @@
        {
         "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
        },
-       "/fa9b8fff47227ef52873c2c0329124ad2b1f4a1cab2c15c8a9b919c26b2e0361.json"
+       "/9e6f913b7125fcc64f24c2805bfae539bf9932b6cb7975c0b3b8524e09dce720.json"
       ]
      ]
     }
@@ -347,7 +351,7 @@
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/zPSMzI00jNQTCwv1k1OydbNyUzSqw4uSUzO1nFOy/MvLSkoLQGxwEK1Onn5Kal6WcX6ZUZGeoYmegaKWcWZmbpFpXklmbmpekEQGgCujUpDVAAAAA=="
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/zPSMzI21zNUTCwv1k1OydbNyUzSqw4uSUzO1nFOy/MvLSkoLQGxwEK1Onn5Kal6WcX6ZUZGeoYmegaKWcWZmbpFpXklmbmpekEQGgAs5dMJVAAAAA=="
    },
    "Metadata": {
     "aws:cdk:path": "amplify-nehanchan-flute-sandbox-85ba319a72/CDKMetadata/Default"

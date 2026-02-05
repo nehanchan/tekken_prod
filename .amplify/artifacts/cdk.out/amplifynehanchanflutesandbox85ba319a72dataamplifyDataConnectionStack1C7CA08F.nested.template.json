@@ -575,7 +575,7 @@
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/yXMQQ6CMBBA0bOwLyMWLyAkLl3AAchYBjKAU8K0EEO4u0FXL3/zLdirhSzBTVPXjunEL9ifpIHaOqAbDW7a7Jo3qEpB4X5iNIciupFCgUoG51k/4mAvO3lEcYG9lF467uOCZ5iyk4rUTystx2F+jzpgz9IfRnxLMOhltRauN8iSQZnTJUrgN0H19wueI/IApwAAAA=="
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/yXMQQ6CQAxA0bO4H6oMJq6FxKULOACpQyED2CG0AzGEuxt09fI334LNbpCecJXENUMy+hdsTxKlplJ0g8FV6k2yGkVIBe4HRjLIoxtIcxQyOE3yYQdb0fIjslMfuAjc+i7OeIQpWi5JwrjQvO/m96gUO8/dbjg0BL2cF2shvcLl1Iv3yRxZ/Zug/PsFJ1jfOacAAAA="
    },
    "Metadata": {
     "aws:cdk:path": "amplify-nehanchan-flute-sandbox-85ba319a72/data/amplifyData/ConnectionStack/CDKMetadata/Default"

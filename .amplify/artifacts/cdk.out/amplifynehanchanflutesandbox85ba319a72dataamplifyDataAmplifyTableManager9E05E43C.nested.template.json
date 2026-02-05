@@ -443,7 +443,7 @@
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/zWNTQ6CMBBGz+K+jFC8gJi4NAYOQIZ2JOWnTZhWYpre3QC6eu/LW3wSZCEhP+HKmdJjNpkO4oPYk248qlHgym00OEOs3UTi9rI7n24y6rPNw5KYcO40QrwHq7xxdmt/T4LLFpnJM1w3CC6hCmokXyFTEjWxC4sisdfGY29sv5/9QhLWaYKBz28pobhAfhrYmGwJ1puZoD74BUFvFbzPAAAA"
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/zWNyw6CMBBFv8V9GaWYuBYTl8bAB5ChHUl5tAnTSkzTfzeArs65OYsrQRYXyA+4cKb0kI2mhfgg9qRrj2oQuHATDU4QKzeSuL3sxqcbjfqsc7ckRpxajRDvwSpvnF3b35PgokFm8gzXFYILKIMayJfIlERF7MKsSGy19tgZ221nv5CEdZqg5+NbSsjPcDr0bEw2B+vNRFDt/AJeO5gezwAAAA=="
    },
    "Metadata": {
     "aws:cdk:path": "amplify-nehanchan-flute-sandbox-85ba319a72/data/amplifyData/AmplifyTableManager/CDKMetadata/Default"

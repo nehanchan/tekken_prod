@@ -22,7 +22,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/7703609b61fac755bd7ab469818417198787315e98fb0620618a286d907442c5.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/610f2cdd0b8ece058e64e96fb6e0d6c9d8e40007073b736d1763b941f3dcfe4c.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -249,6 +249,12 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "mfaTypes"
+          }
+        ],
+        "/amplify-nehanchan-flute-sandbox-85ba319a72/passwordlessOptions": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "passwordlessOptions"
           }
         ],
         "/amplify-nehanchan-flute-sandbox-85ba319a72/socialProviders": [
@@ -5155,6 +5161,10 @@
               "v2": true
             }
           },
+          "@aws-cdk/aws-ecs-patterns:secGroupsDisablesImplicitOpenListener": {
+            "recommendedValue": true,
+            "explanation": "Disable implicit openListener when custom security groups are provided"
+          },
           "@aws-cdk/aws-rds:lowercaseDbIdentifier": {
             "recommendedValue": true,
             "explanation": "Force lowercasing of RDS Cluster names in CDK",
@@ -5248,7 +5258,7 @@
           },
           "@aws-cdk/aws-iam:importedRoleStackSafeDefaultPolicyName": {
             "recommendedValue": true,
-            "explanation": "Enable this feature to by default create default policy names for imported roles that depend on the stack the role is in."
+            "explanation": "Enable this feature to create default policy names for imported roles that depend on the stack the role is in."
           },
           "@aws-cdk/aws-s3:serverAccessLogsUseBucketPolicy": {
             "recommendedValue": true,
@@ -5373,6 +5383,10 @@
             "recommendedValue": true,
             "explanation": "When enabled, nodegroupName attribute of the provisioned EKS NodeGroup will not have the cluster name prefix."
           },
+          "@aws-cdk/aws-eks:useNativeOidcProvider": {
+            "recommendedValue": true,
+            "explanation": "When enabled, EKS V2 clusters will use the native OIDC provider resource AWS::IAM::OIDCProvider instead of creating the OIDCProvider with a custom resource (iam.OpenIDConnectProvider)."
+          },
           "@aws-cdk/aws-ec2:ebsDefaultGp3Volume": {
             "recommendedValue": true,
             "explanation": "When enabled, the default volume type of the EBS volume will be GP3"
@@ -5399,14 +5413,6 @@
           "@aws-cdk/core:explicitStackTags": {
             "recommendedValue": true,
             "explanation": "When enabled, stack tags need to be assigned explicitly on a Stack."
-          },
-          "@aws-cdk/aws-ecs:enableImdsBlockingDeprecatedFeature": {
-            "recommendedValue": false,
-            "explanation": "When set to true along with canContainersAccessInstanceRole=false in ECS cluster, new updated commands will be added to UserData to block container accessing IMDS. **Applicable to Linux only. IMPORTANT: See [details.](#aws-cdkaws-ecsenableImdsBlockingDeprecatedFeature)**"
-          },
-          "@aws-cdk/aws-ecs:disableEcsImdsBlocking": {
-            "recommendedValue": true,
-            "explanation": "When set to true, CDK synth will throw exception if canContainersAccessInstanceRole is false. **IMPORTANT: See [details.](#aws-cdkaws-ecsdisableEcsImdsBlocking)**"
           },
           "@aws-cdk/aws-ecs:reduceEc2FargateCloudWatchPermissions": {
             "recommendedValue": true,
@@ -5528,10 +5534,29 @@
           "@aws-cdk/aws-lambda:useCdkManagedLogGroup": {
             "recommendedValue": true,
             "explanation": "When enabled, CDK creates and manages loggroup for the lambda function"
+          },
+          "@aws-cdk/aws-elasticloadbalancingv2:networkLoadBalancerWithSecurityGroupByDefault": {
+            "recommendedValue": true,
+            "explanation": "When enabled, Network Load Balancer will be created with a security group by default."
+          },
+          "@aws-cdk/aws-stepfunctions-tasks:httpInvokeDynamicJsonPathEndpoint": {
+            "recommendedValue": true,
+            "explanation": "When enabled, allows using a dynamic apiEndpoint with JSONPath format in HttpInvoke tasks.",
+            "unconfiguredBehavesLike": {
+              "v2": true
+            }
+          },
+          "@aws-cdk/aws-ecs-patterns:uniqueTargetGroupId": {
+            "recommendedValue": true,
+            "explanation": "When enabled, ECS patterns will generate unique target group IDs to prevent conflicts during load balancer replacement"
+          },
+          "@aws-cdk/aws-route53-patterns:useDistribution": {
+            "recommendedValue": true,
+            "explanation": "Use the `Distribution` resource instead of `CloudFrontWebDistribution`"
           }
         }
       }
     }
   },
-  "minimumCliVersion": "2.1026.0"
+  "minimumCliVersion": "2.1033.0"
 }

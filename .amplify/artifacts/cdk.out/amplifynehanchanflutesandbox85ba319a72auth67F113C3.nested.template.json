@@ -1,5 +1,5 @@
 {
- "Description": "{\"createdOn\":\"Windows\",\"createdBy\":\"AmplifySandbox\",\"createdWith\":\"1.8.1\",\"stackType\":\"auth-Cognito\",\"metadata\":{}}",
+ "Description": "{\"createdOn\":\"Windows\",\"createdBy\":\"AmplifySandbox\",\"createdWith\":\"1.11.0\",\"stackType\":\"auth-Cognito\",\"metadata\":{}}",
  "Resources": {
   "amplifyAuthUserPool4BA7F805": {
    "Type": "AWS::Cognito::UserPool",
@@ -459,7 +459,7 @@
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/02NzW7CQAyEn4X7xoXQF4BIlXqhKKjnaNl1UufHW8Xeoirad6+WFsrpG49n7BLKTQnrlb1I4fxQjHSG5YCi6E9q3WDsRZrFhY5JAyzvgvMxhNFULd/1TVQjIevj6t959chK+n0rP851GHGnat3HhKzJkJ1gyWYOZiYz2unsbcPBYy9wuOIlslMKbGTbWBFUgV2GkS3soxtQ91bwrwpL1fK9UbV8xHkiEQqckqlRQpwdmuuBk9qOuMupt6ifUZPJj6GXp6+yhM0zrFe9EBVzZKUJof7lD7ZCsP5MAQAA"
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/02NwU7DMAyGn2X31LAWifNWCYnLmDZxrrLULW5TB9UuE4ry7iiDjZ2+3/79ySWU1TOsV/YshWvHwtMJ4g5FsT2qdaOxZ2miCz2TBojvgvM+BG/qjm/5GmpPyHpf/W9eW2Ql/b7K9/MheNyoWvcxIWsyZCeIeZkPM5Pxdjq1tuHQ4iCwu+BlYacU2EjVWBFUgU2GkQq2ixtRt1bwT4VYd3wz6o73OE8kQoFTMhfvqLYn7nP5tujnosnkfzDIw1dZwvoJHleDEBXzwkoTwuGXP6eyxcVDAQAA"
    },
    "Metadata": {
     "aws:cdk:path": "amplify-nehanchan-flute-sandbox-85ba319a72/auth/CDKMetadata/Default"
